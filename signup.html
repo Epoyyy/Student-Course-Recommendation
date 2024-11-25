@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup Page</title>
+    <link rel="stylesheet" href="signupstyles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Signup</h1>
+        <form id="signupForm">
+            <label for="fullName">Full Name:</label>
+            <input type="text" id="fullName" name="fullName" required>
+
+            <label for="dob">Date of Birth:</label>
+            <input type="date" id="dob" name="dob" required>
+
+            <label for="gender">Gender:</label>
+            <select id="gender" name="gender" required>
+                <option value="" disabled selected>Select your gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+            </select>
+
+            <label for="contactNumber">Contact Number:</label>
+            <input type="tel" id="contactNumber" name="contactNumber" required>
+
+            <label for="address">Address:</label>
+            <input type="text" id="address" name="address" required>
+
+            <label for="previousSchool">Previous School:</label>
+            <input type="text" id="previousSchool" name="previousSchool" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit">Signup</button>
+        </form>
+        <p id="message"></p>
+    </div>
+    <script>
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+
+            fetch('signup.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(result => {
+                const message = document.getElementById('message');
+                if (result.success) {
+                    message.textContent = result.message;
+                    message.style.color = 'green';
+                    // Redirect to login page after successful signup
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                } else {
+                    message.textContent = result.message;
+                    message.style.color = 'red';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const message = document.getElementById('message');
+                message.textContent = 'An error occurred. Please try again.';
+                message.style.color = 'red';
+            });
+        });
+    </script>
+</body>
+</html>
