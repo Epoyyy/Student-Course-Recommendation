@@ -1,51 +1,43 @@
-document.getElementById('course-form').addEventListener('submit', function(event) {
-    event.preventDefault();
+document.getElementById('admission-form').addEventListener('submit', async function (e) {
+    e.preventDefault();
 
-    const courseName = document.getElementById('courseName').value;
-    const courseDescription = document.getElementById('courseDescription').value;
-    const departmentID = document.getElementById('departmentID').value;
-    const recommendedMinScore = document.getElementById('recommendedMinScore').value;
+    const formData = new FormData(this);
 
-    // Simulate adding course to the list
-    const courseList = document.getElementById('course-list');
-    const courseItem = document.createElement('div');
-    courseItem.textContent = `Course: ${courseName}, Description: ${courseDescription}, Department ID: ${departmentID}, Recommended Min Score: ${recommendedMinScore}`;
-    courseList.appendChild(courseItem);
+    try {
+        const response = await fetch('fetch_recommendations.php', {
+            method: 'POST',
+            body: formData,
+        });
 
-    // Clear the form
-    document.getElementById('course-form').reset();
-});
+        const result = await response.json();
+        console.log(result); // Debugging output
 
-document.getElementById('college-form').addEventListener('submit', function(event) {
-    event.preventDefault();
+        const courseList = document.getElementById('course-list');
+        const studentInfo = document.getElementById('student-info');
 
-    const collegeName = document.getElementById('collegeName').value;
-    const collegeDescription = document.getElementById('collegeDescription').value;
+        courseList.innerHTML = ''; // Clear previous results
+        studentInfo.innerHTML = ''; // Clear previous student info
 
-    // Simulate adding college to the list
-    const collegeList = document.getElementById('college-list');
-    const collegeItem = document.createElement('div');
-    collegeItem.textContent = `College: ${collegeName}, Description: ${collegeDescription}`;
-    collegeList.appendChild(collegeItem);
+        if (result.error) {
+            studentInfo.textContent = `Error: ${result.error}`;
+        } else {
+            // Display student info
+            const info = document.createElement('p');
+            info.textContent = `Name: ${result.name}, Exam Date: ${result.examDate}`;
+            studentInfo.appendChild(info);
 
-    // Clear the form
-    document.getElementById('college-form').reset();
-});
-
-document.getElementById('student-requirement-form').addEventListener('submit', function(event) {
-    event.preventDefault();
-
-    const studentID = document.getElementById('studentID').value;
-    const requirementID = document.getElementById('requirementID').value;
-    const status = document.getElementById('status').value;
-    const submissionDate = document.getElementById('submissionDate').value;
-
-    // Simulate adding student requirement to the list
-    const studentRequirementList = document.getElementById('student-requirement-list');
-    const studentRequirementItem = document.createElement('div');
-    studentRequirementItem.textContent = `Student ID: ${studentID}, Requirement ID: ${requirementID}, Status: ${status}, Submission Date: ${submissionDate}`;
-    studentRequirementList.appendChild(studentRequirementItem);
-
-    // Clear the form
-    document.getElementById('student-requirement-form').reset();
+            // Display recommended courses
+            if (result.courses.length > 0) {
+                result.courses.forEach(course => {
+                    const li = document.createElement('li');
+                    li.textContent = `${course.courseName} - ${course.description}`;
+                    courseList.appendChild(li);
+                });
+            } else {
+                courseList.textContent = 'No courses available for this SASE score.';
+            }
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
 });
