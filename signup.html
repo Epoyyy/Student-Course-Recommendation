@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Signup Page</title>
+    <title>Signup</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="signupstyles.css">
 </head>
 <body>
@@ -11,7 +12,7 @@
         <h1>Signup</h1>
         <form id="signupForm">
             <label for="fullName">Full Name:</label>
-            <input type="text" id="fullName" name="fullName" required>
+            <input type="text" id="fullName" name="fullName" placeholder="Enter your full name" required>
 
             <label for="dob">Date of Birth:</label>
             <input type="date" id="dob" name="dob" required>
@@ -25,7 +26,7 @@
             </select>
 
             <label for="contactNumber">Contact Number:</label>
-            <input type="tel" id="contactNumber" name="contactNumber" required>
+            <input  type="tel" pattern="[0-9]*" inputmode="numeric" placeholder="Enter phone number" id="contactNumber" name="contactNumber" required>
 
             <label for="address">Address:</label>
             <input type="text" id="address" name="address" required>
@@ -41,7 +42,8 @@
 
             <button type="submit">Signup</button>
         </form>
-        <p id="message"></p>
+        <p id="errorMessage" class="error"></p>
+        <p id="message" class="message"></p>
     </div>
     <script>
         document.getElementById('signupForm').addEventListener('submit', function(e) {
