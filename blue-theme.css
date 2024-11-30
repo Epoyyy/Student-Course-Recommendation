@@ -1,0 +1,145 @@
+/* blue-theme.css */
+
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(to bottom, #1e3c72, #2a5298);
+    color: #ffffff;
+    text-align: center;
+}
+
+h1, h2 {
+    color: #ffffff;
+    text-shadow: 2px 2px 4px #000000;
+}
+
+/* User Info Section */
+.user-info {
+    background-color: #1e3c72;
+    padding: 10px 0;
+    border-bottom: 2px solid #2a5298;
+}
+
+.user-info p {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 0;
+}
+
+/* Form Styles */
+form {
+    background-color: #ffffff;
+    color: #000000;
+    padding: 20px;
+    margin: 20px auto;
+    width: 80%;
+    max-width: 600px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+form label {
+    display: block;
+    font-weight: bold;
+    margin: 10px 0 5px;
+}
+
+form input[type="text"],
+form input[type="file"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #1e3c72;
+    border-radius: 5px;
+}
+
+form input[type="file"] {
+    background-color: #ffffff;
+}
+
+form input:focus {
+    outline: none;
+    border-color: #2a5298;
+    box-shadow: 0 0 5px #2a5298;
+}
+
+/* SASE Scores */
+#sase-scores table {
+    width: 80%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    color: #000000;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#sase-scores th,
+#sase-scores td {
+    border: 1px solid #1e3c72;
+    padding: 10px;
+    text-align: center;
+}
+
+#sase-scores th {
+    background-color: #1e3c72;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+#sase-scores td {
+    background-color: #f4f4f4;
+}
+
+/* Recommendations Section */
+#recommendations ul {
+    list-style: none;
+    padding: 0;
+}
+
+#recommendations li {
+    background-color: #ffffff;
+    color: #000000;
+    margin: 10px auto;
+    padding: 15px;
+    border-radius: 10px;
+    max-width: 600px;
+    text-align: left;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+#recommendations li strong {
+    color: #1e3c72;
+}
+
+#recommendations ul ul {
+    list-style-type: disc;
+    margin: 10px 20px;
+}
+
+/* Buttons (Optional) */
+button {
+    background-color: #1e3c72;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #2a5298;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    form,
+    #sase-scores table,
+    #recommendations li {
+        width: 95%;
+    }
+}
