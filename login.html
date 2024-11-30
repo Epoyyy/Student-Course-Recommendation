@@ -1,28 +1,125 @@
+<?php
+session_start();
+if (!isset($_SESSION['email']) || !isset($_SESSION['name'])) {
+    header("Location: login.html");
+    exit();
+}
+$userName = $_SESSION['name'];
+$studentID = $_SESSION['studentID']; // Assuming you have stored studentID in session after login
+
+// Database connection settings
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "stap1";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Fetch SASE scores
+$sql = "SELECT mathScore, englishScore, scienceScore, aptitudeScore, total_score FROM sase_exam WHERE studentID = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $studentID); // Use "i" for integer binding
+$stmt->execute();
+$result = $stmt->get_result();
+$scores = $result->fetch_assoc();
+
+$stmt->close();
+
+// Initialize arrays to hold recommended colleges and their courses
+$recommendedColleges = [];
+$collegeCourses = [];
+
+// Check scores and determine recommended colleges based on scores
+if ($scores) {
+    $mathScore = $scores['mathScore'];
+    $scienceScore = $scores['scienceScore'];
+    $englishScore = $scores['englishScore'];
+    $aptitudeScore = $scores['aptitudeScore'];
+    $totalScore = $scores['total_score'];
+
+    // Logic for college recommendations based on scores
+    if ($mathScore >= 20 && $aptitudeScore >= 10 && $englishScore >= 30 && $totalScore >= 70) {
+        $recommendedColleges[] = ['collegeID' => 1, 'collegeName' => 'CICS', 'description' => 'College of Information and Computing Sciences'];
+    }
+
+    if ($englishScore >= 30 && $aptitudeScore >= 10 && $totalScore >= 60) {
+        $recommendedColleges[] = ['collegeID' => 2, 'collegeName' => 'CSPEAR', 'description' => 'College of Sports'];
+    }
+
+    if ($englishScore >= 50 && $aptitudeScore >= 10 && $totalScore >= 70) {
+        $recommendedColleges[] = ['collegeID' => 3, 'collegeName' => 'CSSH', 'description' => 'College of Social Sciences and Humanities'];
+    }
+
+    if ($mathScore >= 20 && $aptitudeScore >= 10 && $totalScore >= 75) {
+        $recommendedColleges[] = ['collegeID' => 4, 'collegeName' => 'CBAA', 'description' => 'College of Business Administration'];
+    }
+
+    if ($englishScore >= 30 && $scienceScore >= 20 && $aptitudeScore >= 15 && $totalScore >= 70) {
+        $recommendedColleges[] = ['collegeID' => 5, 'collegeName' => 'CPA', 'description' => 'College of Public Affairs'];
+    }
+
+    // Fetch courses for each recommended college
+    foreach ($recommendedColleges as $college) {
+        $collegeID = $college['collegeID'];
+        $sqlCourses = "SELECT courseName FROM course WHERE departmentID = ?";
+        $stmtCourses = $conn->prepare($sqlCourses);
+        $stmtCourses->bind_param("i", $collegeID); // Use "i" for integer binding
+        $stmtCourses->execute();
+        $resultCourses = $stmtCourses->get_result();
+
+        while ($course = $resultCourses->fetch_assoc()) {
+            $collegeCourses[$collegeID][] = $course['courseName'];
+        }
+
+        $stmtCourses->close();
+    }
+}
+
+$conn->close();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link rel="stylesheet" href="login.css">
+    <title>Student Admission and Course Recommendation</title>
+    <link rel="stylesheet" href="style-homepage.css">
 </head>
 <body>
-    <div id="title"><p> Welcome to Student Admission and Course Recommendation</p></div>
-    <main class="login-container">
-        <h2>Login</h2>
-        <form id="loginForm" action="login.php" method="POST">
-            <div class="input-group">
-                <label for="email">Email</label>
-                <input type="email" placeholder="Enter your email" id="email" name="email" required>
-            </div>
-            <div class="input-group">
-                <label for="password">Password</label>
-                <input type="password" placeholder="Enter your password" id="password" name="password" required>
-            </div>
-            <button type="submit">Login</button>
-        </form>
-        <p id="errorMessage" class="error"></p>
-    </main>
-    <script src="script-login.js"></script>
+    <div class="user-info">
+        <p>Welcome, <span id="user-name"><?php echo htmlspecialchars($userName); ?></span>!</p>
+    </div>
+    
+    <div id="recommendations">
+        <h2>Recommended Colleges</h2>
+        <ul id="college-list">
+            <?php if (!empty($recommendedColleges)): ?>
+                <?php foreach ($recommendedColleges as $college): ?>
+                    < li>
+                        <strong><?php echo htmlspecialchars($college['collegeName']); ?></strong>: 
+                        <?php echo htmlspecialchars($college['description']); ?>
+                        <ul>
+                            <?php if (!empty($collegeCourses[$college['collegeID']])): ?>
+                                <?php foreach ($collegeCourses[$college['collegeID']] as $courseName): ?>
+                                    <li><?php echo htmlspecialchars($courseName); ?></li>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <li>No courses available for this college.</li>
+                            <?php endif; ?>
+                        </ul>
+                    </li>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <li>No recommended colleges available based on your scores.</li>
+            <?php endif; ?>
+        </ul>
+    </div>
 </body>
 </html>

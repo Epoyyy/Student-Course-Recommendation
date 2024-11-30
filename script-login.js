@@ -20,7 +20,7 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
             errorMessage.style.color = 'green';
             errorMessage.style.display = 'block';
             // Redirect to homepage
-            window.location.href = "homepage.html";
+            window.location.href = "homepage.php";
         } else {
             errorMessage.textContent = result.message;
             errorMessage.style.color = 'red';

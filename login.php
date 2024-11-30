@@ -1,4 +1,5 @@
 <?php
+session_start();
 header('Content-Type: application/json');
 
 // Database connection settings
@@ -33,6 +34,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
         if (password_verify($password, $row['password'])) {
+            // Store email, name, and studentID in session
+            $_SESSION['email'] = $email;
+            $_SESSION['name'] = $row['name'];
+            $_SESSION['studentID'] = $row['studentID']; // Add this line to store studentID
+            
             // Successful login
             echo json_encode(["success" => true, "message" => "Login successful."]);
         } else {
